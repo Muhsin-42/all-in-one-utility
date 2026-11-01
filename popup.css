@@ -271,3 +271,236 @@ body.off .row:not(:first-of-type) {
   opacity: 0.4;
   pointer-events: none;
 }
+
+/* --- Color tab --- */
+
+.pick-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font: 600 13px/1.2 Roboto, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.pick-btn:hover {
+  filter: brightness(1.08);
+}
+
+#color-status:empty {
+  display: none;
+}
+
+.color-head {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.swatch {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.35);
+}
+
+.color-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#color-hex {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg);
+  font: 600 16px/1.2 ui-monospace, Menlo, Consolas, monospace;
+  text-transform: uppercase;
+}
+
+#color-hex:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+#color-hex.bad {
+  border-color: #e6a700;
+}
+
+.contrast {
+  display: flex;
+  gap: 6px;
+}
+
+.contrast span {
+  flex: 1;
+  padding: 4px 0;
+  border-radius: 6px;
+  text-align: center;
+  font: 600 11px/1.2 Roboto, Arial, sans-serif;
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.35);
+}
+
+.contrast b {
+  font-size: 13px;
+  margin-right: 3px;
+}
+
+.sv {
+  position: relative;
+  height: 110px;
+  margin-top: 12px;
+  border-radius: 10px;
+  background-image: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.sv-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+.hue {
+  width: 100%;
+  height: 12px;
+  margin: 10px 0 0;
+  border-radius: 6px;
+  appearance: none;
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+  cursor: pointer;
+}
+
+.hue::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.formats {
+  margin-top: 10px;
+}
+
+.format {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 2px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--fg);
+  text-align: left;
+  cursor: pointer;
+}
+
+.format:hover {
+  background: var(--line);
+}
+
+.format .name {
+  flex: none;
+  width: 44px;
+  color: var(--muted);
+  font: 600 10px/1.2 Roboto, Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+
+.format .value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 12px/1.2 ui-monospace, Menlo, Consolas, monospace;
+}
+
+.format .copied {
+  color: #2ba640;
+  font: 600 11px/1.2 Roboto, Arial, sans-serif;
+}
+
+.strip {
+  display: flex;
+  height: 26px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.strip button {
+  flex: 1;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.strip button.here {
+  box-shadow: inset 0 0 0 2px var(--bg), inset 0 0 0 3px var(--fg);
+}
+
+.row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font: 600 11px/1.2 Roboto, Arial, sans-serif;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.chips {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+}
+
+.chips button {
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.35);
+  cursor: pointer;
+}
+
+.chips button:hover {
+  transform: scale(1.15);
+}
+
+.chips .empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}

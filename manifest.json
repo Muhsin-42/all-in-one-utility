@@ -2,11 +2,13 @@
   "manifest_version": 3,
   "name": "YT Quick Hide",
   "version": "2.1.0",
-  "description": "One-click \"Not interested\" + \"Don't recommend channel\", switches to hide YouTube's feeds, Shorts, comments and other distractions, and a speed controller for any video or audio.",
+  "description": "One-click \"Not interested\" + \"Don't recommend channel\", switches to hide YouTube's feeds, Shorts, comments and other distractions, and a speed controller for any video or audio, and a color picker.",
   "minimum_chrome_version": "111",
   "permissions": [
     "storage",
-    "declarativeNetRequest"
+    "declarativeNetRequest",
+    "activeTab",
+    "scripting"
   ],
   "background": {
     "service_worker": "background.js"
