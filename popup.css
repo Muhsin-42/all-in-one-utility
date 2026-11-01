@@ -233,3 +233,41 @@ body.off .row:not(:first-of-type) {
   opacity: 0.4;
   pointer-events: none;
 }
+
+.boost {
+  margin-top: 16px;
+}
+
+.boost-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.boost-value {
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 12px/1.2 Roboto, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.boost-value.loud {
+  color: var(--accent);
+}
+
+.boost input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.speed-off .boost {
+  opacity: 0.4;
+  pointer-events: none;
+}

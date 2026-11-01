@@ -118,7 +118,11 @@ function askTab(msg) {
         return;
       }
       showSpeed(res.speed);
-      status.textContent = res.hasMedia ? '' : 'No video or audio on this page yet.';
+      showBoost(res.boost ?? 1);
+      status.textContent = !res.hasMedia ? 'No video or audio on this page yet.'
+        : res.boostBlocked ? 'Click anywhere on the page once to start the volume boost.'
+        : res.boostUnsupported && res.boost > 1 ? 'This page\'s audio can\'t be boosted (it comes from another site).'
+        : '';
     });
   });
 }
@@ -139,6 +143,28 @@ document.getElementById('speed-power').addEventListener('click', () => {
 document.getElementById('speed-gear').addEventListener('click', (e) => {
   speedForm.hidden = !speedForm.hidden;
   e.currentTarget.classList.toggle('on', !speedForm.hidden);
+});
+
+// --- Volume boost ---
+
+const boostInput = document.getElementById('boost');
+const boostValue = document.getElementById('boost-value');
+
+function showBoost(gain) {
+  const pct = Math.round(gain * 100);
+  boostInput.value = pct;
+  boostValue.textContent = pct + '%';
+  boostValue.classList.toggle('loud', pct > 100);
+}
+
+boostInput.addEventListener('input', () => {
+  boostValue.textContent = boostInput.value + '%';
+  boostValue.classList.toggle('loud', +boostInput.value > 100);
+  if (speedOn) askTab({ boost: boostInput.value / 100 });
+});
+boostValue.addEventListener('click', () => {
+  showBoost(1);
+  if (speedOn) askTab({ boost: 1 });
 });
 
 askTab({});

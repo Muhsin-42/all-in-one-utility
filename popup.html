@@ -26,6 +26,13 @@
       <button type="button" class="speed-btn" data-step="0.1">+0.1</button>
     </div>
     <div class="speed-presets" id="speed-presets"></div>
+    <div class="boost">
+      <div class="boost-head">
+        <span>Volume boost</span>
+        <button type="button" class="boost-value" id="boost-value" title="Reset to 100%">100%</button>
+      </div>
+      <input type="range" id="boost" min="100" max="600" step="10" value="100" aria-label="Volume boost">
+    </div>
     <p class="speed-status" id="speed-status"></p>
     <div class="speed-footer">
       <button type="button" class="icon-btn" id="speed-power" title="Turn speed controller on/off">

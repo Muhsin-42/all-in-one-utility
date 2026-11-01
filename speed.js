@@ -6,6 +6,9 @@
 //
 // Keys: S slower, D faster, R reset to 1× (again: back), G toggle 1.8×,
 //       Z back 10s, X forward 10s, V show/hide the speed overlay.
+//
+// Also boosts volume past 100% (set from the popup), like the Volume Booster
+// extension, by routing each element through a Web Audio gain node.
 
 (() => {
   const STEP = 0.1;
@@ -39,13 +42,14 @@
     if (media.has(el) || !(el instanceof HTMLMediaElement)) return;
     const st = { host: null, box: null, label: null, loadedAt: Date.now() };
     media.set(el, st);
-    const loaded = () => { st.loadedAt = Date.now(); enforce(el); place(el); };
+    const loaded = () => { st.loadedAt = Date.now(); enforce(el); place(el); boostEl(el); };
     el.addEventListener('loadstart', loaded);
     el.addEventListener('loadedmetadata', loaded);
     el.addEventListener('play', loaded);
     el.addEventListener('ratechange', () => onRateChange(el));
     enforce(el);
     place(el);
+    boostEl(el);
     if (!sweepTimer) sweepTimer = setInterval(sweep, 1000);
   }
 
@@ -257,17 +261,90 @@
   document.addEventListener('DOMContentLoaded', scan);
   if (document.readyState !== 'loading') scan();
 
+  // --- Volume boost ---
+
+  // Gain applied to every element: 1 is normal, 6 is 600%. Kept per tab (not
+  // saved) so a loud boost never carries over to the next page.
+  let boost = 1;
+  let audioCtx = null;
+  let boostBlocked = false; // the page hasn't been clicked yet, so audio can't start
+  const gains = new WeakMap(); // element -> GainNode
+
+  const gain = () => (active() ? boost : 1);
+
+  // Web Audio outputs silence for cross-origin media loaded without CORS, so
+  // only route media we know is safe; everything else plays unboosted.
+  function canRoute(el) {
+    if (el.srcObject || el.crossOrigin) return true;
+    const src = el.currentSrc || el.src;
+    if (!src) return false;
+    if (/^(blob|data):/.test(src)) return true;
+    try { return new URL(src, location.href).origin === location.origin; } catch { return false; }
+  }
+
+  // Chrome only lets an AudioContext run after the user has interacted with
+  // the page. Routing into a stopped context would silence the media, so wait.
+  async function audioReady() {
+    audioCtx ||= new AudioContext();
+    if (audioCtx.state !== 'running') {
+      await Promise.race([audioCtx.resume().catch(() => {}), new Promise((r) => setTimeout(r, 300))]);
+    }
+    return audioCtx.state === 'running';
+  }
+
+  async function boostEl(el) {
+    let node = gains.get(el);
+    if (!node) {
+      // Once routed an element can't be unrouted, so leave it alone until a
+      // boost is actually wanted.
+      if (gain() === 1 || !canRoute(el)) return;
+      if (!(await audioReady())) {
+        boostBlocked = true;
+        return;
+      }
+      if (gains.has(el)) return;
+      try {
+        node = audioCtx.createGain();
+        audioCtx.createMediaElementSource(el).connect(node).connect(audioCtx.destination);
+      } catch {
+        return; // the page already routes this element through its own Web Audio
+      }
+      gains.set(el, node);
+    }
+    node.gain.value = gain();
+  }
+
+  async function applyBoost() {
+    boostBlocked = false;
+    await Promise.all([...media.keys()].map(boostEl));
+  }
+
+  // Retry a blocked boost on the user's next click or key press in the page.
+  for (const type of ['pointerdown', 'keydown']) {
+    window.addEventListener(type, () => { if (boostBlocked) applyBoost(); }, true);
+  }
+
   // --- Popup (Video controller tab) ---
 
-  // The popup asks every frame. Frames with media answer at once; the top
-  // frame answers a moment later if none did, so the popup always hears back.
+  // The popup asks every frame. Frames with media answer; the top frame
+  // answers a moment later if none did, so the popup always hears back.
   chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
     if (msg?.type !== 'ytqh-speed') return;
     if ('set' in msg && active()) setSpeed(msg.set);
     const hasMedia = [...media.keys()].some((el) => el.isConnected) || hasDetached;
-    if (hasMedia) return reply({ speed, hasMedia });
-    if (window !== top) return;
-    setTimeout(() => reply({ speed, hasMedia }), 150);
+    if (!hasMedia && window !== top) {
+      if ('boost' in msg) boost = msg.boost;
+      return;
+    }
+    (async () => {
+      if ('boost' in msg && active()) {
+        boost = Math.min(6, Math.max(1, msg.boost));
+        await applyBoost();
+      }
+      if (!hasMedia) await new Promise((r) => setTimeout(r, 150));
+      const routable = [...media.keys()].some((el) => el.isConnected && (gains.has(el) || canRoute(el)));
+      reply({ speed, hasMedia, boost, boostBlocked, boostUnsupported: hasMedia && !routable });
+    })();
     return true;
   });
 
@@ -278,6 +355,7 @@
       enforce(el);
       place(el);
     }
+    applyBoost();
     tellPage();
   }
 
