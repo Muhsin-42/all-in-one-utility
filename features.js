@@ -23,6 +23,7 @@ const YTQH_FEATURES = [
   { key: 'search-junk', label: 'Hide irrelevant search results' },
 
   { group: 'Watch page' },
+  { key: 'dislikes', label: 'Show dislike counts (Return YouTube Dislike)', def: true },
   { key: 'video-sidebar', label: 'Hide video sidebar' },
   { key: 'related', label: 'Hide recommended (related videos)' },
   { key: 'live-chat', label: 'Hide live chat' },

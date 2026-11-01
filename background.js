@@ -1,6 +1,7 @@
 // YT Quick Hide: turns the ad-request blocking rules (rules.json) on or off to
 // match the "Block ads" switch (the rules only apply to requests made by
-// YouTube pages), and keeps the per-tab CORS rules in sync (see cors.js).
+// YouTube pages), fetches dislike counts for dislikes.js, and keeps the per-tab
+// CORS rules in sync (see cors.js).
 
 importScripts('features.js', 'cors.js');
 
@@ -15,6 +16,18 @@ chrome.runtime.onInstalled.addListener(syncAdRules);
 chrome.runtime.onStartup.addListener(syncAdRules);
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'sync' && ('block-ads' in changes || 'enabled' in changes)) syncAdRules();
+});
+
+// --- Return YouTube Dislike ---
+// dislikes.js asks for a video's votes here, so the request isn't subject to
+// YouTube's page CORS rules.
+
+chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+  if (msg?.type !== 'ytqh-dislikes' || !/^[\w-]{11}$/.test(msg.videoId)) return;
+  fetch('https://returnyoutubedislikeapi.com/votes?videoId=' + msg.videoId)
+    .then((r) => (r.ok ? r.json() : null))
+    .then(reply, () => reply(null));
+  return true;
 });
 
 // --- CORS ---

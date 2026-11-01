@@ -70,7 +70,8 @@
         "https://www.youtube-nocookie.com/embed/*"
       ],
       "js": [
-        "settings.js"
+        "settings.js",
+        "dislikes.js"
       ],
       "css": [
         "hide.css"

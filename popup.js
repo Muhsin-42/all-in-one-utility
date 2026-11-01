@@ -3,9 +3,9 @@
 
 const form = document.getElementById('toggles');
 const speedForm = document.getElementById('speed-settings');
-// "Hide all" / "Show all" leave the general, ad and speed switches alone.
+// "Hide all" / "Show all" leave the general, ad, dislike and speed switches alone.
 const HIDE_KEYS = Object.keys(YTQH_DEFAULTS).filter(
-  (k) => k !== 'enabled' && k !== 'quick-hide' && !k.endsWith('-ads') && !k.startsWith('speed'));
+  (k) => !['enabled', 'quick-hide', 'dislikes'].includes(k) && !k.endsWith('-ads') && !k.startsWith('speed'));
 
 function render(settings) {
   form.textContent = '';

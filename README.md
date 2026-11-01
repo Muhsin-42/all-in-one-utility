@@ -15,6 +15,7 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
 
 ### 📺 YouTube
 - **🚫 One-click hide**: a button on every thumbnail that picks "Don't recommend channel" (or "Not interested") for you.
+- **Dislike counts**: brings back the dislike count on videos and Shorts, using the [Return YouTube Dislike](https://returnyoutubedislike.com) API.
 - **Ad blocking**: blocks ad requests and banners, and mutes and fast-forwards video ads.
 - **Hide distractions**: switches for the home feed, Shorts, Mixes, comments, related videos, live chat, end screens, autoplay and more.
 
@@ -61,6 +62,7 @@ Requires Chrome 111 or newer (also works in Edge, Brave and other Chromium brows
 | `manifest.json` | Extension manifest |
 | `popup.html`, `popup.css`, `popup.js` | The popup and its tabs |
 | `features.js`, `settings.js`, `hide.css` | YouTube hide switches |
+| `dislikes.js` | Dislike counts (Return YouTube Dislike) |
 | `content.js`, `styles.css` | One-click "Don't recommend" button |
 | `rules.json`, `background.js` | Ad-request blocking and CORS rules |
 | `speed.js`, `speed-main.js` | Speed controller and volume boost |
