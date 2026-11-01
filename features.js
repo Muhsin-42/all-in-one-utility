@@ -47,7 +47,7 @@ const YTQH_FEATURES = [
   { key: 'speed', label: 'Speed controller for video and audio', def: true },
   { key: 'speed-overlay', label: 'Show speed on videos', def: true },
   { key: 'speed-remember', label: 'Remember speed across videos', def: true },
-  { note: 'S / D slower / faster · R reset · G 1.8× · Z / X back / forward 10s · V show / hide' },
+  { note: 'S / D slower / faster · R reset · G 1.8× · Z / X back / forward 10s · P pop out · A A–B loop · V show / hide' },
 ];
 
 const YTQH_DEFAULTS = Object.fromEntries(

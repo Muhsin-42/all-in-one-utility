@@ -175,6 +175,21 @@ body.off .row:not(:first-of-type) {
   font-size: 16px;
 }
 
+.speed-tools {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
 .speed-btn:hover {
   border-color: var(--accent);
 }
@@ -229,7 +244,8 @@ body.off .row:not(:first-of-type) {
 }
 
 .speed-off .speed-main,
-.speed-off .speed-presets {
+.speed-off .speed-presets,
+.speed-off .speed-tools {
   opacity: 0.4;
   pointer-events: none;
 }

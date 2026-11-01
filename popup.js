@@ -119,6 +119,8 @@ function askTab(msg) {
       }
       showSpeed(res.speed);
       showBoost(res.boost ?? 1);
+      showLoop(res.loop);
+      document.getElementById('pip-btn').classList.toggle('active', !!res.pip);
       status.textContent = !res.hasMedia ? 'No video or audio on this page yet.'
         : res.boostBlocked ? 'Click anywhere on the page once to start the volume boost.'
         : res.boostUnsupported && res.boost > 1 ? 'This page\'s audio can\'t be boosted (it comes from another site).'
@@ -143,6 +145,42 @@ document.getElementById('speed-power').addEventListener('click', () => {
 document.getElementById('speed-gear').addEventListener('click', (e) => {
   speedForm.hidden = !speedForm.hidden;
   e.currentTarget.classList.toggle('on', !speedForm.hidden);
+});
+
+// --- Picture-in-picture and A–B loop ---
+
+const loopBtn = document.getElementById('loop-btn');
+const loopLabel = document.getElementById('loop-label');
+const clock = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+
+function showLoop(loop) {
+  loopLabel.textContent = !loop ? 'Set A'
+    : loop.b == null ? `${clock(loop.a)} → set B` : `${clock(loop.a)} → ${clock(loop.b)}`;
+  loopBtn.classList.toggle('active', loop?.b != null);
+}
+
+// Runs speed.js's toggle through executeScript rather than a message, because
+// only executeScript passes this click on to the page, and the browser won't
+// open picture-in-picture without one.
+document.getElementById('pip-btn').addEventListener('click', () => {
+  if (!speedOn) return;
+  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+    if (!tab) return;
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id, allFrames: true },
+      func: () => window.ytqhTogglePip?.() ?? null,
+    }, (res) => {
+      const results = chrome.runtime.lastError ? [] : (res || []).map((r) => r.result);
+      if (results.includes('entered')) window.close();
+      else if (results.includes('exited')) document.getElementById('pip-btn').classList.remove('active');
+      else status.textContent = results.includes('failed')
+        ? 'This video can\'t be popped out.' : 'No video to pop out on this page.';
+    });
+  });
+});
+
+loopBtn.addEventListener('click', () => {
+  if (speedOn) askTab({ loop: true });
 });
 
 // --- Volume boost ---

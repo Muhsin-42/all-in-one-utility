@@ -22,6 +22,8 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
 ### ⏩ Video controller (works on every site)
 - Change playback speed for any `<video>` or `<audio>`, with presets from 0.5× to 2.5×.
 - Boost volume up to 600%.
+- **Pop out** any video into a picture-in-picture window.
+- **A–B loop**: repeat a chosen section, handy for music practice or tutorials.
 - Keyboard shortcuts:
 
   | Key | Action |
@@ -30,6 +32,8 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
   | `R` | Reset to 1× |
   | `G` | Toggle 1.8× |
   | `Z` / `X` | Back / forward 10s |
+  | `P` | Picture-in-picture on / off |
+  | `A` | A–B loop: set start, set end, clear |
   | `V` | Show / hide the speed overlay |
 
 ### 🎨 Color

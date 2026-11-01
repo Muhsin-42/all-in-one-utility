@@ -5,7 +5,8 @@
 // media inside shadow DOM.
 //
 // Keys: S slower, D faster, R reset to 1× (again: back), G toggle 1.8×,
-//       Z back 10s, X forward 10s, V show/hide the speed overlay.
+//       Z back 10s, X forward 10s, V show/hide the speed overlay,
+//       P picture-in-picture, A A–B loop (set start, set end, clear).
 //
 // Also boosts volume past 100% (set from the popup), like the Volume Booster
 // extension, by routing each element through a Web Audio gain node.
@@ -21,7 +22,8 @@
   // user's choice (e.g. YouTube's own speed menu) and adopted.
   const GRACE = 2000;
   const STORE = 'speed-last';
-  const KEYS = { s: 'slower', d: 'faster', r: 'reset', g: 'preferred', z: 'rewind', x: 'advance', v: 'display' };
+  const KEYS = { s: 'slower', d: 'faster', r: 'reset', g: 'preferred', z: 'rewind', x: 'advance', v: 'display',
+    p: 'pip', a: 'loop' };
 
   let settings = { ...YTQH_DEFAULTS };
   let speed = 1;
@@ -29,7 +31,7 @@
   let overlaysHidden = false;
   let hasDetached = false; // speed-main.js has seen page-created audio
   let sweepTimer = 0;
-  const media = new Map(); // element -> { host, box, label, loadedAt }
+  const media = new Map(); // element -> { host, box, label, loadedAt, loopA, loopB }
 
   const active = () => settings.enabled && settings.speed;
   const round = (v) => Math.round(Math.min(MAX, Math.max(MIN, v)) * 100) / 100;
@@ -44,6 +46,13 @@
     media.set(el, st);
     const loaded = () => { st.loadedAt = Date.now(); enforce(el); place(el); boostEl(el); };
     el.addEventListener('loadstart', loaded);
+    // YouTube reuses the same element for the next video: drop its loop.
+    el.addEventListener('loadstart', () => clearLoop(el));
+    el.addEventListener('ended', () => {
+      if (st.loopB == null) return;
+      el.currentTime = st.loopA;
+      el.play().catch(() => {});
+    });
     el.addEventListener('loadedmetadata', loaded);
     el.addEventListener('play', loaded);
     el.addEventListener('ratechange', () => onRateChange(el));
@@ -120,7 +129,9 @@
   `;
 
   const BUTTONS = [['rewind', '«', 'Back 10s (Z)'], ['slower', '−', 'Slower (S)'],
-    ['faster', '+', 'Faster (D)'], ['advance', '»', 'Forward 10s (X)'], ['display', '×', 'Hide (V)']];
+    ['faster', '+', 'Faster (D)'], ['advance', '»', 'Forward 10s (X)'],
+    ['loop', '⟲', 'A–B loop (A)'], ['pip', '⧉', 'Picture-in-picture (P)'], ['display', '×', 'Hide (V)']];
+  const BEFORE_LABEL = new Set(['rewind', 'slower']);
 
   function build(el, st) {
     const host = document.createElement('ytqh-speed');
@@ -139,7 +150,7 @@
       b.textContent = text;
       b.title = title;
       b.addEventListener('click', () => run(action));
-      box.insertBefore(b, action === 'faster' || action === 'advance' || action === 'display' ? null : label);
+      box.insertBefore(b, BEFORE_LABEL.has(action) ? label : null);
     }
     // Keep clicks on the overlay from pausing or seeking the player underneath.
     for (const type of ['click', 'dblclick', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart']) {
@@ -179,7 +190,9 @@
 
   function updateLabel(el) {
     const st = media.get(el);
-    if (st?.label) st.label.textContent = fmt(el.playbackRate);
+    if (!st?.label) return;
+    const loop = st.loopB != null ? ' A–B' : st.loopA != null ? ' A' : '';
+    st.label.textContent = fmt(el.playbackRate) + loop;
   }
 
   function flash() {
@@ -214,6 +227,93 @@
     document.dispatchEvent(new CustomEvent('ytqh-seek', { detail: delta }));
   }
 
+  // The element the user most likely means: a playing video, then any playing
+  // media, then the biggest video on the page.
+  function mainMedia() {
+    const els = [...media.keys()].filter((el) => el.isConnected);
+    const isVideo = (el) => el instanceof HTMLVideoElement;
+    const area = (el) => el.offsetWidth * el.offsetHeight;
+    return els.find((el) => isVideo(el) && !el.paused) || els.find((el) => !el.paused) ||
+      els.filter(isVideo).sort((a, b) => area(b) - area(a))[0] || els[0] || null;
+  }
+
+  // --- Picture-in-picture ---
+
+  async function togglePip() {
+    if (document.pictureInPictureElement) {
+      await document.exitPictureInPicture().catch(() => {});
+      return 'exited';
+    }
+    const el = mainMedia();
+    if (!(el instanceof HTMLVideoElement) || !document.pictureInPictureEnabled) return null;
+    // Some sites opt their player out; the user asked for it, so opt back in.
+    el.removeAttribute('disablePictureInPicture');
+    try {
+      await el.requestPictureInPicture();
+      return 'entered';
+    } catch {
+      return 'failed';
+    }
+  }
+
+  // The popup calls this through chrome.scripting.executeScript, which
+  // carries over the click on its button: requestPictureInPicture() needs one.
+  window.ytqhTogglePip = () => (active() ? togglePip() : null);
+
+  // --- A–B loop ---
+
+  let loopTimer = 0;
+
+  function clearLoop(el) {
+    const st = media.get(el);
+    if (!st || st.loopA == null) return;
+    st.loopA = st.loopB = null;
+    updateLabel(el);
+  }
+
+  // First press marks A, second marks B and starts looping, third clears it.
+  function cycleLoop() {
+    const el = mainMedia();
+    const st = media.get(el);
+    if (!st) return;
+    const t = el.currentTime;
+    if (st.loopA == null) {
+      st.loopA = t;
+    } else if (st.loopB == null) {
+      const [a, b] = t < st.loopA ? [t, st.loopA] : [st.loopA, t];
+      if (b - a < 0.5) {
+        clearLoop(el);
+      } else {
+        Object.assign(st, { loopA: a, loopB: b });
+        el.currentTime = a;
+        // timeupdate only fires every ~250ms, too coarse to end the loop on time.
+        loopTimer ||= setInterval(loopTick, 50);
+      }
+    } else {
+      clearLoop(el);
+    }
+    updateLabel(el);
+    flash();
+  }
+
+  function loopTick() {
+    let looping = false;
+    for (const [el, st] of media) {
+      if (st.loopB == null) continue;
+      looping = true;
+      if (el.currentTime >= st.loopB) el.currentTime = st.loopA;
+    }
+    if (!looping) {
+      clearInterval(loopTimer);
+      loopTimer = 0;
+    }
+  }
+
+  function loopState() {
+    const st = media.get(mainMedia());
+    return st?.loopA != null ? { a: st.loopA, b: st.loopB } : null;
+  }
+
   function run(action) {
     switch (action) {
       case 'slower': return setSpeed(speed - STEP);
@@ -224,6 +324,8 @@
       case 'preferred': return setSpeed(speed === PREFERRED ? 1 : PREFERRED);
       case 'rewind': return seek(-SEEK);
       case 'advance': return seek(SEEK);
+      case 'pip': return togglePip();
+      case 'loop': return cycleLoop();
       case 'display':
         overlaysHidden = !overlaysHidden;
         for (const el of media.keys()) place(el);
@@ -337,13 +439,15 @@
       return;
     }
     (async () => {
+      if (msg.loop && active()) cycleLoop();
       if ('boost' in msg && active()) {
         boost = Math.min(6, Math.max(1, msg.boost));
         await applyBoost();
       }
       if (!hasMedia) await new Promise((r) => setTimeout(r, 150));
       const routable = [...media.keys()].some((el) => el.isConnected && (gains.has(el) || canRoute(el)));
-      reply({ speed, hasMedia, boost, boostBlocked, boostUnsupported: hasMedia && !routable });
+      reply({ speed, hasMedia, boost, boostBlocked, boostUnsupported: hasMedia && !routable,
+        loop: loopState(), pip: !!document.pictureInPictureElement });
     })();
     return true;
   });
