@@ -1,0 +1,77 @@
+# All-in-One Utility
+
+A lightweight Chrome extension (Manifest V3) that bundles a few everyday tools into one popup: a distraction-free YouTube, a speed and volume controller for any video, a color picker with a font inspector, and a per-site CORS switch for web development.
+
+No accounts, no tracking, no build step. Everything runs locally and your settings sync through your Chrome profile.
+
+<p align="center">
+  <img src="docs/screenshots/yt.png" alt="YT tab" width="220">
+  <img src="docs/screenshots/speed.png" alt="Video controller tab" width="220">
+  <img src="docs/screenshots/color.png" alt="Color tab" width="220">
+  <img src="docs/screenshots/cors.png" alt="CORS tab" width="220">
+</p>
+
+## Features
+
+### 📺 YouTube
+- **🚫 One-click hide**: a button on every thumbnail that picks "Don't recommend channel" (or "Not interested") for you.
+- **Ad blocking**: blocks ad requests and banners, and mutes and fast-forwards video ads.
+- **Hide distractions**: switches for the home feed, Shorts, Mixes, comments, related videos, live chat, end screens, autoplay and more.
+
+### ⏩ Video controller (works on every site)
+- Change playback speed for any `<video>` or `<audio>`, with presets from 0.5× to 2.5×.
+- Boost volume up to 600%.
+- Keyboard shortcuts:
+
+  | Key | Action |
+  | --- | --- |
+  | `S` / `D` | Slower / faster |
+  | `R` | Reset to 1× |
+  | `G` | Toggle 1.8× |
+  | `Z` / `X` | Back / forward 10s |
+  | `V` | Show / hide the speed overlay |
+
+### 🎨 Color
+- Eyedropper to pick any color on the page.
+- Copy as HEX, RGB, HSL, OKLCH or a CSS variable.
+- Contrast check against white and black, shades, history, and a scan of the colors used on the page.
+- **What font?** Hover any text to see its font, size and weight. Click to pin details and copy the CSS.
+
+### 🌐 CORS
+- Turn CORS on for the sites you choose, like `localhost:3000`.
+- Sends back the page's exact origin instead of `*`, so cookies and `Authorization` headers keep working.
+- Only affects tabs on those sites. A **CORS** badge shows when it is on.
+
+## Installation
+
+1. Clone or [download](https://github.com/Muhsin-42/all-in-one-utility/archive/refs/heads/main.zip) this repository.
+   ```bash
+   git clone https://github.com/Muhsin-42/all-in-one-utility.git
+   ```
+2. Open `chrome://extensions` and turn on **Developer mode**.
+3. Click **Load unpacked** and select the project folder.
+4. Pin the extension and click its icon to open the popup.
+
+Requires Chrome 111 or newer (also works in Edge, Brave and other Chromium browsers).
+
+## Project structure
+
+| File | Purpose |
+| --- | --- |
+| `manifest.json` | Extension manifest |
+| `popup.html`, `popup.css`, `popup.js` | The popup and its tabs |
+| `features.js`, `settings.js`, `hide.css` | YouTube hide switches |
+| `content.js`, `styles.css` | One-click "Don't recommend" button |
+| `rules.json`, `background.js` | Ad-request blocking and CORS rules |
+| `speed.js`, `speed-main.js` | Speed controller and volume boost |
+| `popup-color.js`, `picker.js`, `fontinspect.js` | Color picker and font inspector |
+| `cors.js` | Shared CORS settings |
+
+## Permissions
+
+| Permission | Why |
+| --- | --- |
+| `storage` | Save your settings |
+| `declarativeNetRequest` | Block ad requests and add CORS headers |
+| `activeTab`, `scripting` | Run the color picker and font inspector on the current tab |
+| `<all_urls>` | Speed controller and CORS work on any site |
