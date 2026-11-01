@@ -2,6 +2,7 @@
 // injects picker.js, which saves the picked colour to chrome.storage.local
 // ('color-current', 'color-history'). The rest of the tab edits, converts and
 // copies the current colour, and can scan the page for the colours it uses.
+// "What font?" injects fontinspect.js, a WhatFont-style hover/click inspector.
 
 const colorStatus = document.getElementById('color-status');
 const swatch = document.getElementById('color-swatch');
@@ -269,6 +270,24 @@ document.getElementById('color-pick').addEventListener('click', () => {
           args: [shot],
         }, () => window.close());
       });
+    });
+  });
+});
+
+// --- What font ---
+
+document.getElementById('font-inspect').addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+    if (!tab) return;
+    chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['fontinspect.js'] }, () => {
+      if (chrome.runtime.lastError) {
+        colorStatus.textContent = 'Can\'t inspect fonts on this page (browser pages and the Web Store are off-limits).';
+        return;
+      }
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => window.ytqhStartFontInspector(),
+      }, () => window.close());
     });
   });
 });

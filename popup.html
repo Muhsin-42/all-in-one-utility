@@ -9,6 +9,7 @@
     <button type="button" role="tab" data-tab="yt">YT</button>
     <button type="button" role="tab" data-tab="speed">Video controller</button>
     <button type="button" role="tab" data-tab="color">Color</button>
+    <button type="button" role="tab" data-tab="cors">CORS</button>
   </nav>
 
   <section id="tab-yt" class="panel" role="tabpanel">
@@ -46,11 +47,48 @@
     <form id="speed-settings" hidden></form>
   </section>
 
+  <section id="tab-cors" class="panel" role="tabpanel" hidden>
+    <div class="cors-origin" id="cors-origin"></div>
+    <label class="row">
+      <span>Allow CORS on this site</span>
+      <input type="checkbox" id="cors-this">
+    </label>
+    <p class="speed-status" id="cors-status"></p>
+
+    <h2>Sites</h2>
+    <ul class="cors-list" id="cors-list"></ul>
+    <form class="cors-add" id="cors-add">
+      <input type="text" id="cors-add-input" placeholder="localhost:3000 or https://app.example.com" aria-label="Site to add" spellcheck="false">
+      <button type="submit">Add</button>
+    </form>
+
+    <h2>Options</h2>
+    <label class="row">
+      <span>Allow credentials (cookies, Authorization)</span>
+      <input type="checkbox" id="cors-credentials">
+    </label>
+    <label class="row">
+      <span>Allow requests to localhost / private network</span>
+      <input type="checkbox" id="cors-private-network">
+    </label>
+    <label class="cors-field">
+      <span>Extra request headers</span>
+      <input type="text" id="cors-headers" placeholder="X-My-Header, X-Other-Header" spellcheck="false">
+    </label>
+    <p class="note">Only tabs on these sites get CORS headers, and only on their fetch/XHR, font, image and media responses. The page's exact origin is sent back instead of *, so logged-in requests keep working, and no other headers are changed. A server that answers the OPTIONS preflight with an error (404, 405…) can't be fixed by an extension.</p>
+  </section>
+
   <section id="tab-color" class="panel" role="tabpanel" hidden>
+    <div class="pick-row">
     <button type="button" class="pick-btn" id="color-pick">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3l.4.4Z"/></svg>
-      Pick a color from the page
+      Pick color
     </button>
+    <button type="button" class="pick-btn alt" id="font-inspect" title="WhatFont: hover any text to see its font, click to pin the details">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20 10 4h1l6 16"/><path d="M6.5 14h8"/><path d="M15 20h6"/></svg>
+      What font?
+    </button>
+    </div>
     <p class="speed-status" id="color-status"></p>
 
     <div class="color-head">
@@ -77,6 +115,7 @@
   </section>
 
   <script src="features.js"></script>
+  <script src="cors.js"></script>
   <script src="popup.js"></script>
   <script src="popup-color.js"></script>
 </body>

@@ -272,6 +272,107 @@ body.off .row:not(:first-of-type) {
   pointer-events: none;
 }
 
+/* --- CORS tab --- */
+
+.cors-origin {
+  margin: 2px 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.cors-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cors-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.cors-list li.note {
+  font-family: inherit;
+  border-bottom: 0;
+}
+
+.cors-list button {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cors-list button:hover {
+  background: var(--line);
+  color: var(--accent);
+}
+
+.cors-add {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cors-add input,
+.cors-field input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg);
+  font: 12px/1.2 ui-monospace, Menlo, monospace;
+}
+
+.cors-add input:focus,
+.cors-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.cors-add button {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cors-add button:hover {
+  border-color: var(--accent);
+}
+
+.cors-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 0 2px;
+}
+
+.speed-off#tab-cors .row,
+.speed-off#tab-cors .cors-add {
+  opacity: 0.45;
+}
+
 /* --- Color tab --- */
 
 .pick-btn {
@@ -291,6 +392,16 @@ body.off .row:not(:first-of-type) {
 
 .pick-btn:hover {
   filter: brightness(1.08);
+}
+
+.pick-row {
+  display: flex;
+  gap: 8px;
+}
+
+.pick-btn.alt {
+  background: var(--line);
+  color: var(--fg);
 }
 
 #color-status:empty {

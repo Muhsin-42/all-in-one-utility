@@ -169,6 +169,101 @@ boostValue.addEventListener('click', () => {
 
 askTab({});
 
+// --- CORS tab: edits the site list in cors.js's settings (background.js applies it) ---
+
+const corsThis = document.getElementById('cors-this');
+const corsStatus = document.getElementById('cors-status');
+const corsList = document.getElementById('cors-list');
+const corsHeaders = document.getElementById('cors-headers');
+let cors = { ...CORS_DEFAULTS };
+let tabUrl = '';
+let tabOrigin = '';
+
+function setSites(sites) {
+  chrome.storage.sync.set({ 'cors-sites': [...new Set(sites)] });
+}
+
+function renderCors(settings) {
+  cors = settings;
+  const sites = cors['cors-sites'];
+  const on = !!corsOriginFor(sites, tabUrl);
+  document.getElementById('cors-origin').textContent = tabOrigin || 'This page';
+  corsThis.checked = on;
+  corsThis.disabled = !tabOrigin;
+  corsStatus.textContent = !tabOrigin ? 'CORS can only be allowed on http and https pages.'
+    : !settings.enabled ? 'The extension is off (see the YT tab).'
+    : on ? 'Active in this tab. Reload if requests already failed.'
+    : '';
+
+  corsList.textContent = '';
+  if (!sites.length) {
+    const li = document.createElement('li');
+    li.className = 'note';
+    li.textContent = 'No sites yet.';
+    corsList.appendChild(li);
+  }
+  for (const site of sites) {
+    const li = document.createElement('li');
+    const name = document.createElement('span');
+    name.textContent = site;
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.title = 'Remove';
+    remove.textContent = '×';
+    remove.addEventListener('click', () => setSites(sites.filter((s) => s !== site)));
+    li.append(name, remove);
+    corsList.appendChild(li);
+  }
+
+  document.getElementById('cors-credentials').checked = cors['cors-credentials'];
+  document.getElementById('cors-private-network').checked = cors['cors-private-network'];
+  if (document.activeElement !== corsHeaders) corsHeaders.value = cors['cors-headers'];
+  document.getElementById('tab-cors').classList.toggle('speed-off', !settings.enabled);
+}
+
+corsThis.addEventListener('change', () => {
+  const sites = cors['cors-sites'];
+  // Turning it off removes every entry that covers this page, not just its origin.
+  setSites(corsThis.checked ? [...sites, tabOrigin]
+    : sites.filter((s) => !corsOriginFor([s], tabUrl)));
+});
+
+document.getElementById('cors-add').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('cors-add-input');
+  const site = corsNormalize(input.value);
+  if (!site) {
+    input.setCustomValidity('Enter a host like localhost:3000 or an origin like https://app.example.com');
+    input.reportValidity();
+    return;
+  }
+  input.value = '';
+  setSites([...cors['cors-sites'], site]);
+});
+document.getElementById('cors-add-input').addEventListener('input', (e) => e.target.setCustomValidity(''));
+
+for (const key of ['cors-credentials', 'cors-private-network']) {
+  document.getElementById(key).addEventListener('change', (e) => {
+    chrome.storage.sync.set({ [key]: e.target.checked });
+  });
+}
+corsHeaders.addEventListener('change', () => {
+  chrome.storage.sync.set({ 'cors-headers': corsHeaders.value.trim() });
+});
+
+const CORS_KEYS = { enabled: true, ...CORS_DEFAULTS };
+chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+  tabUrl = tab?.url || '';
+  try {
+    const u = new URL(tabUrl);
+    if (u.protocol === 'http:' || u.protocol === 'https:') tabOrigin = u.origin;
+  } catch {}
+  chrome.storage.sync.get(CORS_KEYS, renderCors);
+});
+chrome.storage.onChanged.addListener((_changes, area) => {
+  if (area === 'sync') chrome.storage.sync.get(CORS_KEYS, renderCors);
+});
+
 chrome.storage.sync.get(YTQH_DEFAULTS, render);
 chrome.storage.onChanged.addListener((_changes, area) => {
   if (area === 'sync') chrome.storage.sync.get(YTQH_DEFAULTS, render);
