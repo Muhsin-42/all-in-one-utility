@@ -1,4 +1,4 @@
-// YT Quick Hide popup: one switch per feature in features.js, saved to
+// Browser Kit popup: one switch per feature in features.js, saved to
 // chrome.storage.sync (settings.js applies them to open YouTube tabs).
 
 const form = document.getElementById('toggles');

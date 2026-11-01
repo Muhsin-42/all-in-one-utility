@@ -1,4 +1,4 @@
-// YT Quick Hide: playback speed controller for every <video> and <audio> on any
+// Browser Kit: playback speed controller for every <video> and <audio> on any
 // site, like the Video Speed Controller extension. Runs in the extension's own
 // context in every frame; speed-main.js (page context) covers the media this
 // script can't reach: audio that was never added to the page (new Audio()) and

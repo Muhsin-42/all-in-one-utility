@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "YT Quick Hide",
+  "name": "Browser Kit",
   "version": "2.2.0",
-  "description": "One-click \"Not interested\" + \"Don't recommend channel\", switches to hide YouTube's feeds, Shorts, comments and other distractions, and a speed controller for any video or audio, a color picker, and a site blocker.",
+  "description": "Handy browser tools: a cleaner YouTube, video speed and volume control, color picker, font inspector, CORS switch and site blocker.",
   "minimum_chrome_version": "111",
   "permissions": [
     "storage",
@@ -26,7 +26,7 @@
     { "resources": ["blocked.html"], "matches": ["<all_urls>"] }
   ],
   "action": {
-    "default_title": "YT Quick Hide",
+    "default_title": "Browser Kit",
     "default_popup": "popup.html"
   },
   "content_scripts": [

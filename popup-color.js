@@ -1,4 +1,4 @@
-// YT Quick Hide popup: Color tab. "Pick" screenshots the current tab and
+// Browser Kit popup: Color tab. "Pick" screenshots the current tab and
 // injects picker.js, which saves the picked colour to chrome.storage.local
 // ('color-current', 'color-history'). The rest of the tab edits, converts and
 // copies the current colour, and can scan the page for the colours it uses.

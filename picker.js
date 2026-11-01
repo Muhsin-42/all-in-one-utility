@@ -1,4 +1,4 @@
-// YT Quick Hide: eyedropper overlay, injected into the current tab by the
+// Browser Kit: eyedropper overlay, injected into the current tab by the
 // popup's Color tab (popup-color.js). The popup hands over a screenshot of the
 // tab; this freezes the page behind it, shows a magnifier loupe under the
 // cursor, and on click copies the colour and saves it to chrome.storage.local.

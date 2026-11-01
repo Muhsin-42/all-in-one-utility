@@ -1,4 +1,4 @@
-// YT Quick Hide: the page blocked sites are sent to (see blocker.js). The
+// Browser Kit: the page blocked sites are sent to (see blocker.js). The
 // original URL is in the hash. The phrase has to be typed out: paste and drop
 // are turned off.
 

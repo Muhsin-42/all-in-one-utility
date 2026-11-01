@@ -1,4 +1,4 @@
-// YT Quick Hide: CORS settings, shared by background.js and popup.js.
+// Browser Kit: CORS settings, shared by background.js and popup.js.
 //
 // Unlike "allow all CORS" extensions this only touches tabs whose page is on a
 // site you added, echoes that page's exact origin instead of "*" (so cookies

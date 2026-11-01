@@ -1,4 +1,4 @@
-// YT Quick Hide: adds a 🚫 button to every recommendation card. One click opens
+// Browser Kit: adds a 🚫 button to every recommendation card. One click opens
 // the card's ⋮ menu and picks "Don't recommend channel", or "Not interested"
 // when the channel option isn't offered (mixes, playlists, some videos).
 
@@ -46,7 +46,7 @@
   const visible = (el) => !!el && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
   const norm = (s) => (s || '').replace(/[‘’ʼ]/g, "'").replace(/\s+/g, ' ').trim();
 
-  const log = (...a) => console.log('[YT Quick Hide]', ...a);
+  const log = (...a) => console.log('[Browser Kit]', ...a);
 
   function findMenuButton(card) {
     for (const sel of MENU_BTN_SEL) {

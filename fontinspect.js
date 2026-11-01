@@ -1,4 +1,4 @@
-// YT Quick Hide: WhatFont-style font inspector, injected into the current tab
+// Browser Kit: WhatFont-style font inspector, injected into the current tab
 // by the popup's Color tab (popup-color.js). Hovering text shows the font that
 // is actually rendered plus size and weight; clicking pins a card with the full
 // details (stack, line height, letter spacing, colour, element) where any value

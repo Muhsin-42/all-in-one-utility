@@ -1,4 +1,4 @@
-// YT Quick Hide: page-context half of the speed controller (see speed.js).
+// Browser Kit: page-context half of the speed controller (see speed.js).
 // Hooks play() so speed.js also covers audio the page never adds to the
 // document (new Audio()) and media inside shadow DOM.
 

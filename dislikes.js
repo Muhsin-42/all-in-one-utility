@@ -1,4 +1,4 @@
-// YT Quick Hide: shows dislike counts again, using the Return YouTube Dislike
+// Browser Kit: shows dislike counts again, using the Return YouTube Dislike
 // API (returnyoutubedislikeapi.com). Runs after settings.js, which sets the
 // ytqh-dislikes flag on <html> while the switch is on. The request goes through
 // background.js so the page's CORS rules don't apply.

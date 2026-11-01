@@ -1,4 +1,4 @@
-// YT Quick Hide: site blocker settings, shared by background.js, popup.js and
+// Browser Kit: site blocker settings, shared by background.js, popup.js and
 // blocked.js.
 //
 // Listed sites are redirected to blocked.html. Typing the unlock phrase there

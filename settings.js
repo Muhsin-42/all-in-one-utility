@@ -1,4 +1,4 @@
-// YT Quick Hide: applies the popup's toggles to the page. Runs in the extension's
+// Browser Kit: applies the popup's toggles to the page. Runs in the extension's
 // own context (it needs chrome.storage), separate from content.js, which runs in
 // the page's context.
 
@@ -31,7 +31,7 @@
     try { localStorage.setItem(CACHE, JSON.stringify(settings)); } catch {}
     tick();
     if (window === top) {
-      console.log('[YT Quick Hide] settings applied:', Object.keys(settings).filter((k) => settings[k]).join(', '));
+      console.log('[Browser Kit] settings applied:', Object.keys(settings).filter((k) => settings[k]).join(', '));
     }
   }
 

@@ -1,4 +1,4 @@
-// YT Quick Hide: the list of toggles shown in the popup. Shared by popup.js and
+// Browser Kit: the list of toggles shown in the popup. Shared by popup.js and
 // settings.js. Each key becomes an attribute on <html> (ytqh-<key>) while it's
 // on, and hide.css hides things based on those attributes.
 

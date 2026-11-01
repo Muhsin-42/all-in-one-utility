@@ -1,4 +1,4 @@
-# All-in-One Utility
+# Browser Kit
 
 A lightweight Chrome extension (Manifest V3) that bundles a few everyday tools into one popup: a distraction-free YouTube, a speed and volume controller for any video, a color picker with a font inspector, and a per-site CORS switch for web development.
 
@@ -51,9 +51,9 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
 
 ## Installation
 
-1. Clone or [download](https://github.com/Muhsin-42/all-in-one-utility/archive/refs/heads/main.zip) this repository.
+1. Clone or [download](https://github.com/Muhsin-42/browser-kit/archive/refs/heads/main.zip) this repository.
    ```bash
-   git clone https://github.com/Muhsin-42/all-in-one-utility.git
+   git clone https://github.com/Muhsin-42/browser-kit.git
    ```
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Click **Load unpacked** and select the project folder.

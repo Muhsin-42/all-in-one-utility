@@ -1,4 +1,4 @@
-// YT Quick Hide: turns the ad-request blocking rules (rules.json) on or off to
+// Browser Kit: turns the ad-request blocking rules (rules.json) on or off to
 // match the "Block ads" switch (the rules only apply to requests made by
 // YouTube pages), fetches dislike counts for dislikes.js, and keeps the per-tab
 // CORS rules in sync (see cors.js) and runs the site blocker (see blocker.js).

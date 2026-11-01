@@ -1,4 +1,4 @@
-/* YT Quick Hide: hides parts of YouTube based on the ytqh-* attributes that
+/* Browser Kit: hides parts of YouTube based on the ytqh-* attributes that
    settings.js puts on <html>. Selectors cover desktop (ytd-), mobile (ytm-) and
    the player (ytp-, also used in embeds). */
 
