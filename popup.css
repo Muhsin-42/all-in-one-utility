@@ -115,3 +115,121 @@ body.off .row:not(:first-of-type) {
 .footer button:hover {
   border-color: var(--accent);
 }
+
+/* --- Tabs --- */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: -4px -4px 10px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--line);
+}
+
+.tabs button {
+  flex: 1;
+  padding: 6px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: 600 12px/1.2 Roboto, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.tabs button[aria-selected="true"] {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+/* --- Video controller tab --- */
+
+.speed-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.speed-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.speed-btn {
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fg);
+  font: 14px/1.2 Roboto, Arial, sans-serif;
+  cursor: pointer;
+}
+
+.speed-main .speed-btn {
+  padding: 16px 0;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+.speed-btn:hover {
+  border-color: var(--accent);
+}
+
+.speed-btn.current,
+.speed-btn.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+}
+
+.speed-status {
+  min-height: 1.3em;
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.speed-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  background: var(--line);
+}
+
+#speed-power.on {
+  color: #2ba640;
+}
+
+#speed-gear.on {
+  color: var(--fg);
+}
+
+.speed-off .speed-main,
+.speed-off .speed-presets {
+  opacity: 0.4;
+  pointer-events: none;
+}

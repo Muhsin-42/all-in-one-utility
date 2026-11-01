@@ -2,24 +2,29 @@
 // chrome.storage.sync (settings.js applies them to open YouTube tabs).
 
 const form = document.getElementById('toggles');
+const speedForm = document.getElementById('speed-settings');
 // "Hide all" / "Show all" leave the general, ad and speed switches alone.
 const HIDE_KEYS = Object.keys(YTQH_DEFAULTS).filter(
   (k) => k !== 'enabled' && k !== 'quick-hide' && !k.endsWith('-ads') && !k.startsWith('speed'));
 
 function render(settings) {
   form.textContent = '';
+  speedForm.textContent = '';
+  // Groups marked tab: 'speed' go in the Video controller tab's settings.
+  let target = form;
   for (const f of YTQH_FEATURES) {
     if (f.group) {
+      target = f.tab === 'speed' ? speedForm : form;
       const h = document.createElement('h2');
       h.textContent = f.group;
-      form.appendChild(h);
+      target.appendChild(h);
       continue;
     }
     if (f.note) {
       const p = document.createElement('p');
       p.className = 'note';
       p.textContent = f.note;
-      form.appendChild(p);
+      target.appendChild(p);
       continue;
     }
     const row = document.createElement('label');
@@ -31,9 +36,10 @@ function render(settings) {
     input.checked = !!settings[f.key];
     input.addEventListener('change', () => chrome.storage.sync.set({ [f.key]: input.checked }));
     row.append(text, input);
-    form.appendChild(row);
+    target.appendChild(row);
   }
   document.body.classList.toggle('off', !settings.enabled);
+  renderSpeed(settings);
 }
 
 function setAll(value) {
@@ -43,5 +49,101 @@ function setAll(value) {
 document.getElementById('all-on').addEventListener('click', () => setAll(true));
 document.getElementById('all-off').addEventListener('click', () => setAll(false));
 
+// --- Tabs ---
+
+const TAB_KEY = 'ytqh-popup-tab';
+
+function showTab(name) {
+  for (const b of document.querySelectorAll('.tabs button')) {
+    b.setAttribute('aria-selected', b.dataset.tab === name);
+  }
+  for (const p of document.querySelectorAll('.panel')) p.hidden = p.id !== 'tab-' + name;
+  try { localStorage.setItem(TAB_KEY, name); } catch {}
+}
+
+for (const b of document.querySelectorAll('.tabs button')) {
+  b.addEventListener('click', () => showTab(b.dataset.tab));
+}
+let savedTab = 'yt';
+try { savedTab = localStorage.getItem(TAB_KEY) || 'yt'; } catch {}
+showTab(savedTab);
+
+// --- Video controller tab: talks to speed.js in the current tab ---
+
+const PRESETS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 2.5];
+const presets = document.getElementById('speed-presets');
+const current = document.getElementById('speed-current');
+const status = document.getElementById('speed-status');
+let speedOn = true;
+let speed = 1;
+
+for (const p of PRESETS) {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'speed-btn';
+  b.textContent = p;
+  b.dataset.speed = p;
+  b.addEventListener('click', () => sendSpeed(p));
+  presets.appendChild(b);
+}
+
+const round = (v) => Math.round(Math.min(16, Math.max(0.1, v)) * 100) / 100;
+
+function showSpeed(value) {
+  speed = value;
+  current.textContent = String(value);
+  for (const b of presets.children) b.classList.toggle('active', +b.dataset.speed === value);
+}
+
+let speedSetting = true;
+
+function renderSpeed(settings) {
+  speedSetting = !!settings.speed;
+  speedOn = !!(settings.enabled && settings.speed);
+  if (!settings.enabled) status.textContent = 'The extension is off (see the YT tab).';
+  document.getElementById('speed-power').classList.toggle('on', speedOn);
+  document.getElementById('tab-speed').classList.toggle('speed-off', !speedOn);
+}
+
+// Ask the page for its speed (frames with media answer), or set a new one.
+// Pages the extension can't run on (chrome://, the Web Store) don't answer.
+function askTab(msg) {
+  chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+    if (!tab) return;
+    chrome.tabs.sendMessage(tab.id, { type: 'ytqh-speed', ...msg }, (res) => {
+      if (chrome.runtime.lastError || !res) {
+        status.textContent = 'Speed control isn\'t available on this page.';
+        chrome.storage.local.get({ 'speed-last': 1 }, (s) => { if (!('set' in msg)) showSpeed(s['speed-last']); });
+        if ('set' in msg) chrome.storage.local.set({ 'speed-last': msg.set });
+        return;
+      }
+      showSpeed(res.speed);
+      status.textContent = res.hasMedia ? '' : 'No video or audio on this page yet.';
+    });
+  });
+}
+
+function sendSpeed(value) {
+  if (!speedOn) return;
+  showSpeed(round(value));
+  askTab({ set: speed });
+}
+
+for (const b of document.querySelectorAll('[data-step]')) {
+  b.addEventListener('click', () => sendSpeed(speed + +b.dataset.step));
+}
+current.addEventListener('click', () => sendSpeed(1));
+document.getElementById('speed-power').addEventListener('click', () => {
+  chrome.storage.sync.set({ speed: !speedSetting });
+});
+document.getElementById('speed-gear').addEventListener('click', (e) => {
+  speedForm.hidden = !speedForm.hidden;
+  e.currentTarget.classList.toggle('on', !speedForm.hidden);
+});
+
+askTab({});
+
 chrome.storage.sync.get(YTQH_DEFAULTS, render);
-chrome.storage.onChanged.addListener(() => chrome.storage.sync.get(YTQH_DEFAULTS, render));
+chrome.storage.onChanged.addListener((_changes, area) => {
+  if (area === 'sync') chrome.storage.sync.get(YTQH_DEFAULTS, render);
+});

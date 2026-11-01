@@ -40,8 +40,9 @@ const YTQH_FEATURES = [
   { key: 'annotations', label: 'Disable annotations' },
   { key: 'autoplay', label: 'Disable autoplay' },
 
-  // speed.js: works on every site, not just YouTube.
-  { group: 'Speed controller (all sites)' },
+  // speed.js: works on every site, not just YouTube. tab: 'speed' puts this
+  // group in the popup's Video controller tab (under its ⚙ settings).
+  { group: 'Speed controller (all sites)', tab: 'speed' },
   { key: 'speed', label: 'Speed controller for video and audio', def: true },
   { key: 'speed-overlay', label: 'Show speed on videos', def: true },
   { key: 'speed-remember', label: 'Remember speed across videos', def: true },

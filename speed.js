@@ -257,6 +257,20 @@
   document.addEventListener('DOMContentLoaded', scan);
   if (document.readyState !== 'loading') scan();
 
+  // --- Popup (Video controller tab) ---
+
+  // The popup asks every frame. Frames with media answer at once; the top
+  // frame answers a moment later if none did, so the popup always hears back.
+  chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+    if (msg?.type !== 'ytqh-speed') return;
+    if ('set' in msg && active()) setSpeed(msg.set);
+    const hasMedia = [...media.keys()].some((el) => el.isConnected) || hasDetached;
+    if (hasMedia) return reply({ speed, hasMedia });
+    if (window !== top) return;
+    setTimeout(() => reply({ speed, hasMedia }), 150);
+    return true;
+  });
+
   // --- Settings ---
 
   function applySettings() {
