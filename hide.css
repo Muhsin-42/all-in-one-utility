@@ -249,3 +249,37 @@ html[ytqh-annotations] .ytp-cards-button,
 html[ytqh-annotations] .ytp-suggested-action {
   display: none !important;
 }
+
+/* Ads: banners, promoted results, in-feed ad cards, player overlays */
+html[ytqh-block-ads] #masthead-ad,
+html[ytqh-block-ads] #player-ads,
+html[ytqh-block-ads] ytd-ad-slot-renderer,
+html[ytqh-block-ads] ytd-rich-item-renderer:has(ytd-ad-slot-renderer),
+html[ytqh-block-ads] ytd-rich-section-renderer:has(ytd-statement-banner-renderer),
+html[ytqh-block-ads] ytd-in-feed-ad-layout-renderer,
+html[ytqh-block-ads] ytd-banner-promo-renderer,
+html[ytqh-block-ads] ytd-statement-banner-renderer,
+html[ytqh-block-ads] ytd-video-masthead-ad-v3-renderer,
+html[ytqh-block-ads] ytd-primetime-promo-renderer,
+html[ytqh-block-ads] ytd-carousel-ad-renderer,
+html[ytqh-block-ads] ytd-display-ad-renderer,
+html[ytqh-block-ads] .ytd-display-ad-renderer,
+html[ytqh-block-ads] ytd-promoted-sparkles-web-renderer,
+html[ytqh-block-ads] ytd-promoted-sparkles-text-search-renderer,
+html[ytqh-block-ads] ytd-promoted-video-renderer,
+html[ytqh-block-ads] ytd-search-pyv-renderer,
+html[ytqh-block-ads] ytd-action-companion-ad-renderer,
+html[ytqh-block-ads] ytd-companion-slot-renderer,
+html[ytqh-block-ads] ytd-player-legacy-desktop-watch-ads-renderer,
+html[ytqh-block-ads] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+html[ytqh-block-ads] .ytp-ad-overlay-container,
+html[ytqh-block-ads] .ytp-ad-overlay-slot,
+html[ytqh-block-ads] .ytp-ad-image-overlay,
+html[ytqh-block-ads] .ytp-suggested-action-badge,
+html[ytqh-block-ads] ytm-companion-ad-renderer,
+html[ytqh-block-ads] ytm-promoted-sparkles-web-renderer,
+html[ytqh-block-ads] ytm-promoted-video-renderer,
+html[ytqh-block-ads] ad-slot-renderer,
+html[ytqh-block-ads] ytm-rich-item-renderer:has(ad-slot-renderer) {
+  display: none !important;
+}

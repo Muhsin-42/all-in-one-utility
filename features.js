@@ -7,6 +7,10 @@ const YTQH_FEATURES = [
   { key: 'enabled', label: 'Extension enabled', def: true },
   { key: 'quick-hide', label: '🚫 Don\'t recommend button on thumbnails', def: true },
 
+  { group: 'Ads' },
+  { key: 'block-ads', label: 'Block ads (banners, promos, ad requests)', def: true },
+  { key: 'skip-ads', label: 'Skip video ads (mute + fast-forward)', def: true },
+
   { group: 'Home & navigation' },
   { key: 'home-feed', label: 'Hide homepage feed' },
   { key: 'shorts', label: 'Hide YouTube Shorts' },
@@ -35,6 +39,13 @@ const YTQH_FEATURES = [
   { key: 'endscreen-cards', label: 'Hide end screen cards' },
   { key: 'annotations', label: 'Disable annotations' },
   { key: 'autoplay', label: 'Disable autoplay' },
+
+  // speed.js: works on every site, not just YouTube.
+  { group: 'Speed controller (all sites)' },
+  { key: 'speed', label: 'Speed controller for video and audio', def: true },
+  { key: 'speed-overlay', label: 'Show speed on videos', def: true },
+  { key: 'speed-remember', label: 'Remember speed across videos', def: true },
+  { note: 'S / D slower / faster · R reset · G 1.8× · Z / X back / forward 10s · V show / hide' },
 ];
 
 const YTQH_DEFAULTS = Object.fromEntries(

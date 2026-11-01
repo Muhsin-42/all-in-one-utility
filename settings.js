@@ -71,6 +71,63 @@
     return true;
   }
 
+  // --- Video ads: mute and fast-forward (approach from RYS). ---
+  // Never seeks: with server-stitched ads the video's timeline includes the
+  // real content, so jumping to the end would skip the video too.
+
+  const AD_RATE = 16;
+  let adHandled = false;
+  let mutedBeforeAd = false;
+  let rateBeforeAd = 1;
+
+  function adShowing() {
+    if (document.querySelector('#movie_player.ad-showing, .html5-video-player.ad-showing')) return true;
+    return [...document.querySelectorAll('.ytp-ad-player-overlay-instream-info, .ytp-ad-button-icon')]
+      .some((el) => getComputedStyle(el).display !== 'none');
+  }
+
+  // Undo our mute and speed-up once the ad is over.
+  function restoreAfterAd() {
+    if (!adHandled) return;
+    // Clear the flag first so speed.js sees the restored rate as a normal change.
+    root.removeAttribute('ytqh-ad-active');
+    const video = document.querySelector('#movie_player video, video');
+    if (video) {
+      video.muted = mutedBeforeAd;
+      if (video.playbackRate === AD_RATE) video.playbackRate = rateBeforeAd;
+    }
+    adHandled = false;
+  }
+
+  function skipAds() {
+    document.querySelectorAll('.ytp-ad-overlay-close-button').forEach((b) => b.offsetParent && b.click());
+
+    const video = document.querySelector('#movie_player video, video');
+    if (!video || !adShowing()) {
+      restoreAfterAd();
+      return;
+    }
+    if (!adHandled) {
+      mutedBeforeAd = video.muted;
+      rateBeforeAd = video.playbackRate === AD_RATE ? 1 : video.playbackRate;
+      adHandled = true;
+    }
+    video.muted = true;
+    video.playbackRate = AD_RATE;
+
+    // YouTube may ignore scripted clicks on Skip, so this is best-effort.
+    document.querySelectorAll(
+      '.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button, .ytp-skip-ad button')
+      .forEach((b) => b.offsetParent && b.click());
+  }
+
+  function adTick() {
+    if (on('skip-ads')) skipAds();
+    else restoreAfterAd();
+    // Tells speed.js to leave the rate alone while we're fast-forwarding an ad.
+    root.toggleAttribute('ytqh-ad-active', adHandled);
+  }
+
   function tick() {
     setFlags();
     const href = location.href;
@@ -109,4 +166,6 @@
   document.addEventListener('DOMContentLoaded', tick);
   window.addEventListener('popstate', tick);
   setInterval(tick, 500);
+  // Ads need a faster check so they're caught within a fraction of a second.
+  setInterval(adTick, 100);
 })();

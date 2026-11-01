@@ -2,8 +2,9 @@
 // chrome.storage.sync (settings.js applies them to open YouTube tabs).
 
 const form = document.getElementById('toggles');
-// "Hide all" / "Show all" leave the general switches alone.
-const HIDE_KEYS = Object.keys(YTQH_DEFAULTS).filter((k) => k !== 'enabled' && k !== 'quick-hide');
+// "Hide all" / "Show all" leave the general, ad and speed switches alone.
+const HIDE_KEYS = Object.keys(YTQH_DEFAULTS).filter(
+  (k) => k !== 'enabled' && k !== 'quick-hide' && !k.endsWith('-ads') && !k.startsWith('speed'));
 
 function render(settings) {
   form.textContent = '';
@@ -12,6 +13,13 @@ function render(settings) {
       const h = document.createElement('h2');
       h.textContent = f.group;
       form.appendChild(h);
+      continue;
+    }
+    if (f.note) {
+      const p = document.createElement('p');
+      p.className = 'note';
+      p.textContent = f.note;
+      form.appendChild(p);
       continue;
     }
     const row = document.createElement('label');

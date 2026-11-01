@@ -1,20 +1,61 @@
 {
   "manifest_version": 3,
   "name": "YT Quick Hide",
-  "version": "2.0.0",
-  "description": "One-click \"Not interested\" + \"Don't recommend channel\", plus switches to hide YouTube's feeds, Shorts, comments and other distractions.",
+  "version": "2.1.0",
+  "description": "One-click \"Not interested\" + \"Don't recommend channel\", switches to hide YouTube's feeds, Shorts, comments and other distractions, and a speed controller for any video or audio.",
   "minimum_chrome_version": "111",
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      { "id": "ads", "enabled": true, "path": "rules.json" }
+    ]
+  },
   "action": {
     "default_title": "YT Quick Hide",
     "default_popup": "popup.html"
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*"],
-      "js": ["content.js"],
-      "css": ["styles.css"],
+      "matches": [
+        "https://www.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
       "run_at": "document_idle",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "features.js",
+        "speed.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true
+    },
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "speed-main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true,
+      "match_about_blank": true,
       "world": "MAIN"
     },
     {
@@ -23,8 +64,12 @@
         "https://m.youtube.com/*",
         "https://www.youtube-nocookie.com/embed/*"
       ],
-      "js": ["features.js", "settings.js"],
-      "css": ["hide.css"],
+      "js": [
+        "settings.js"
+      ],
+      "css": [
+        "hide.css"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }

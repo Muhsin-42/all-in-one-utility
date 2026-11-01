@@ -50,6 +50,12 @@ h2 {
   cursor: pointer;
 }
 
+.note {
+  margin: 6px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
 /* Switch-style checkbox */
 .row input {
   appearance: none;
