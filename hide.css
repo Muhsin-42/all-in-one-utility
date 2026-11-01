@@ -1,0 +1,251 @@
+/* YT Quick Hide: hides parts of YouTube based on the ytqh-* attributes that
+   settings.js puts on <html>. Selectors cover desktop (ytd-), mobile (ytm-) and
+   the player (ytp-, also used in embeds). */
+
+/* 🚫 button switched off */
+html[ytqh-no-quick-hide] .ytqh-btn {
+  display: none !important;
+}
+
+/* Homepage feed */
+/* ytd-browse doesn't always carry page-subtype="home", so also rely on the
+   page tag settings.js sets from the URL. */
+html[ytqh-home-feed] ytd-browse[page-subtype="home"],
+html[ytqh-home-feed] ytd-browse[page-subtype="home"] ytd-rich-grid-renderer,
+html[ytqh-home-feed] div[tab-identifier="FEwhat_to_watch"] .rich-grid-renderer-contents,
+html[ytqh-home-feed] div[tab-identifier="FEwhat_to_watch"] div.chip-bar-contents,
+html[ytqh-home-feed][ytqh-page="home"] ytd-browse ytd-two-column-browse-results-renderer #primary > ytd-rich-grid-renderer,
+html[ytqh-home-feed][ytqh-page="home"] ytd-browse ytd-rich-grid-renderer > #contents,
+html[ytqh-home-feed][ytqh-page="home"] ytd-browse ytd-rich-grid-renderer > #header,
+html[ytqh-home-feed][ytqh-page="home"] ytd-browse #chips-wrapper,
+html[ytqh-home-feed] ytd-browse[page-subtype="home"] #header,
+html[ytqh-home-feed][ytqh-page="home"] ytm-browse ytm-rich-grid-renderer,
+html[ytqh-home-feed][ytqh-page="home"] ytm-browse ytm-section-list-renderer,
+html[ytqh-home-feed][ytqh-page="home"] ytm-feed-filter-chip-bar-renderer {
+  display: none !important;
+}
+
+/* Shorts: shelves, single results, sidebar entries, filter chips */
+html[ytqh-shorts] [ytqh-short],
+html[ytqh-shorts] a[title="Shorts"],
+html[ytqh-shorts] grid-shelf-view-model.ytGridShelfViewModelHost.ytd-item-section-renderer,
+html[ytqh-shorts] ytd-reel-shelf-renderer,
+html[ytqh-shorts] ytd-rich-shelf-renderer[is-shorts],
+html[ytqh-shorts] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html[ytqh-shorts] ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model),
+html[ytqh-shorts] grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+html[ytqh-shorts] ytd-item-section-renderer:has(> #contents > grid-shelf-view-model ytm-shorts-lockup-view-model),
+html[ytqh-shorts] ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+html[ytqh-shorts] ytd-video-renderer:has(a[href^="/shorts/"]),
+html[ytqh-shorts] ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+html[ytqh-shorts] ytd-grid-video-renderer:has(a[href^="/shorts/"]),
+html[ytqh-shorts] yt-lockup-view-model:has(a[href^="/shorts/"]),
+html[ytqh-shorts] ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html[ytqh-shorts] ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html[ytqh-shorts] ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+html[ytqh-shorts] ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html[ytqh-shorts] yt-tab-shape[tab-title="Shorts"],
+html[ytqh-shorts] yt-chip-cloud-chip-renderer:has(yt-formatted-string[title="Shorts"]),
+html[ytqh-shorts] ytm-reel-shelf-renderer,
+html[ytqh-shorts] ytm-shorts-lockup-view-model,
+html[ytqh-shorts] ytm-pivot-bar-item-renderer:has(.pivot-shorts) {
+  display: none !important;
+}
+
+/* Mixes / radio playlists */
+html[ytqh-mixes] ytd-radio-renderer,
+html[ytqh-mixes] ytd-compact-radio-renderer,
+html[ytqh-mixes] ytd-rich-item-renderer:has(a[href*="start_radio=1"]),
+html[ytqh-mixes] yt-lockup-view-model:has(a[href*="start_radio=1"]),
+html[ytqh-mixes] ytm-radio-renderer,
+html[ytqh-mixes] ytm-compact-radio-renderer {
+  display: none !important;
+}
+
+/* Subscriptions (the page itself redirects to home in settings.js) */
+html[ytqh-subscriptions] ytd-guide-entry-renderer:has(a[href="/feed/subscriptions"]),
+html[ytqh-subscriptions] ytd-mini-guide-entry-renderer:has(a[href="/feed/subscriptions"]),
+html[ytqh-subscriptions] ytd-guide-section-renderer:has(a[href="/feed/channels"]),
+html[ytqh-subscriptions] ytm-pivot-bar-item-renderer:has(.pivot-subs) {
+  display: none !important;
+}
+
+/* Explore and Trending */
+html[ytqh-explore] ytd-guide-section-renderer:has(a[href^="/feed/trending"]),
+html[ytqh-explore] ytd-guide-section-renderer:has(a[href^="/feed/explore"]),
+html[ytqh-explore] ytd-guide-section-renderer:has(a[href="/gaming"]),
+html[ytqh-explore] ytd-guide-section-renderer:has(a[href="/feed/storefront"], a[href="/channel/UC-9-kyTW8ZkZNDHQJ6FgpwQ"]),
+html[ytqh-explore] ytm-chip-cloud-chip-renderer[chip-style="STYLE_EXPLORE_LAUNCHER_CHIP"],
+html[ytqh-explore] ytd-guide-entry-renderer:has(a[href^="/feed/explore"]),
+html[ytqh-explore] ytd-guide-entry-renderer:has(a[href^="/feed/trending"]),
+html[ytqh-explore] ytd-mini-guide-entry-renderer:has(a[href^="/feed/explore"]),
+html[ytqh-explore] ytd-mini-guide-entry-renderer:has(a[href^="/feed/trending"]),
+html[ytqh-explore] ytm-pivot-bar-item-renderer:has(.pivot-explore),
+html[ytqh-explore] ytm-pivot-bar-item-renderer:has(.pivot-trending) {
+  display: none !important;
+}
+
+/* More from YouTube */
+html[ytqh-more-from-youtube] ytd-guide-section-renderer:has(a[href="/premium"]),
+html[ytqh-more-from-youtube] ytd-guide-section-renderer:has(a[href*="youtube.com/premium"]),
+html[ytqh-more-from-youtube] ytd-guide-section-renderer:has(a[href*="music.youtube.com"]),
+html[ytqh-more-from-youtube] ytd-guide-section-renderer:has(a[href*="youtubekids.com"]) {
+  display: none !important;
+}
+
+/* Top header: hide the bar and close the gap it leaves */
+html[ytqh-header] #masthead-container,
+html[ytqh-header] ytd-masthead,
+html[ytqh-header] ytm-mobile-topbar-renderer,
+html[ytqh-header] header.mobile-topbar-header {
+  display: none !important;
+}
+html[ytqh-header] ytd-app {
+  --ytd-masthead-height: 0px !important;
+}
+html[ytqh-header] #page-manager.ytd-app {
+  margin-top: 0 !important;
+}
+html[ytqh-header] tp-yt-app-drawer #header,
+html[ytqh-header] ytd-browse[page-subtype] #chips-wrapper {
+  top: 0 !important;
+}
+
+/* Notification bell */
+html[ytqh-notifications] ytd-notification-topbar-button-renderer,
+html[ytqh-notifications] ytd-masthead #buttons > :has(button[aria-label*="otification"]),
+html[ytqh-notifications] ytm-notification-topbar-button-renderer {
+  display: none !important;
+}
+
+/* Irrelevant search results ("People also watched", "Related to your search"…) */
+html[ytqh-search-junk] ytd-search ytd-shelf-renderer,
+html[ytqh-search-junk] ytd-search ytd-horizontal-card-list-renderer,
+html[ytqh-search-junk] ytd-search ytd-reel-shelf-renderer,
+html[ytqh-search-junk] ytd-search grid-shelf-view-model,
+html[ytqh-search-junk][ytqh-page="search"] ytm-shelf-renderer,
+html[ytqh-search-junk][ytqh-page="search"] ytm-horizontal-card-list-renderer {
+  display: none !important;
+}
+
+/* Video sidebar (the whole right column) */
+html[ytqh-video-sidebar] ytd-watch-flexy #secondary,
+html[ytqh-video-sidebar] ytd-watch-flexy #secondary-inner {
+  display: none !important;
+}
+/* Let the player use the freed space (from RYS) */
+html[ytqh-video-sidebar] ytd-watch-flexy[flexy][is-two-columns_]:not([fullscreen]):not([theater]) {
+  --ytd-watch-flexy-max-player-width: calc(var(--ytd-watch-flexy-chat-max-height) * var(--ytd-watch-flexy-width-ratio) / var(--ytd-watch-flexy-height-ratio)) !important;
+}
+html[ytqh-video-sidebar][ytqh-page="watch"] #columns {
+  justify-content: center;
+}
+
+/* Recommended / related videos */
+html[ytqh-related] ytd-watch-flexy #related,
+html[ytqh-related] ytd-watch-next-secondary-results-renderer,
+html[ytqh-related][ytqh-page="watch"] ytm-item-section-renderer[section-identifier="related-items"],
+html[ytqh-related][ytqh-page="watch"] ytm-single-column-watch-next-results-renderer ytm-item-section-renderer:has(ytm-video-with-context-renderer) {
+  display: none !important;
+}
+
+/* Live chat */
+html[ytqh-live-chat] ytd-live-chat-frame,
+html[ytqh-live-chat] ytd-watch-flexy #chat,
+html[ytqh-live-chat] ytd-watch-flexy #chat-container,
+html[ytqh-live-chat] ytm-live-chat-renderer {
+  display: none !important;
+}
+
+/* Playlist panel */
+html[ytqh-playlist] ytd-watch-flexy ytd-playlist-panel-renderer,
+html[ytqh-playlist] ytm-playlist-panel-renderer {
+  display: none !important;
+}
+
+/* Comments */
+html[ytqh-comments] ytd-watch-flexy #comments,
+html[ytqh-comments] #comment-teaser,
+html[ytqh-comments] ytd-comments#comments,
+html[ytqh-comments] ytd-item-section-renderer[section-identifier="comment-item-section"],
+html[ytqh-comments] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-comments-section"],
+html[ytqh-comments] ytd-reel-video-renderer #comments-button,
+html[ytqh-comments] ytm-comment-section-renderer,
+html[ytqh-comments] ytm-item-section-renderer[section-identifier="comments-entry-point"],
+html[ytqh-comments] ytm-comments-entry-point-header-renderer {
+  display: none !important;
+}
+
+/* Merch, tickets, offers */
+html[ytqh-merch] ytd-merch-shelf-renderer,
+html[ytqh-merch] ytd-ticket-shelf-renderer,
+html[ytqh-merch] ytd-offer-module-renderer,
+html[ytqh-merch] ytd-donation-shelf-renderer,
+html[ytqh-merch] ytd-watch-flexy #ticket-shelf,
+html[ytqh-merch] ytd-watch-flexy #merch-shelf,
+html[ytqh-merch] ytd-watch-flexy #offer-module,
+html[ytqh-merch] ytm-merch-shelf-renderer,
+html[ytqh-merch] ytm-ticket-shelf-renderer {
+  display: none !important;
+}
+
+/* Video info: everything under the player (title, channel, buttons, description) */
+html[ytqh-video-info] ytd-watch-flexy ytd-watch-metadata,
+html[ytqh-video-info] ytd-video-primary-info-renderer,
+html[ytqh-video-info] ytd-video-secondary-info-renderer,
+html[ytqh-video-info] ytm-slim-video-metadata-section-renderer {
+  display: none !important;
+}
+
+/* Video buttons bar: likes, dislikes, share, save… */
+html[ytqh-video-buttons] ytd-watch-metadata #actions,
+html[ytqh-video-buttons] ytd-video-primary-info-renderer #menu-container,
+html[ytqh-video-buttons] ytm-slim-video-action-bar-renderer {
+  display: none !important;
+}
+
+/* Channel: avatar, name, subscribe button */
+html[ytqh-channel] ytd-watch-metadata #owner,
+html[ytqh-channel] ytd-video-secondary-info-renderer #top-row,
+html[ytqh-channel] ytm-slim-owner-renderer {
+  display: none !important;
+}
+
+/* Video description */
+html[ytqh-description] ytd-watch-metadata #description,
+html[ytqh-description] ytd-watch-metadata #description-inline-expander,
+html[ytqh-description] ytd-video-secondary-info-renderer #description,
+html[ytqh-description] ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-structured-description"],
+html[ytqh-description] ytm-expandable-video-description-body-renderer {
+  display: none !important;
+}
+
+/* End screen videowall (grid of videos when a video ends) */
+html[ytqh-endscreen-wall] .html5-endscreen,
+html[ytqh-endscreen-wall] .ytp-endscreen-content,
+html[ytqh-endscreen-wall] .videowall-endscreen,
+html[ytqh-endscreen-wall] .ytp-fullscreen-grid,
+html[ytqh-endscreen-wall] .ytp-fullscreen-grid-stills-container,
+html[ytqh-endscreen-wall] div.ytp-pause-overlay,
+html[ytqh-endscreen-wall] .ytp-autonav-endscreen-countdown-overlay,
+html[ytqh-endscreen-wall] .ytp-modern-videowall-still {
+  display: none !important;
+}
+
+/* End screen cards (video/channel boxes over the last seconds) */
+html[ytqh-endscreen-cards] .ytp-ce-element,
+html[ytqh-endscreen-cards] .ytp-ce-covering-overlay,
+html[ytqh-endscreen-cards] .ytp-ce-element-shadow {
+  display: none !important;
+}
+
+/* Annotations, info cards and branding watermark */
+html[ytqh-annotations] .annotation,
+html[ytqh-annotations] .ytp-iv-video-content,
+html[ytqh-annotations] .video-annotations,
+html[ytqh-annotations] .iv-branding,
+html[ytqh-annotations] .ytp-cards-teaser,
+html[ytqh-annotations] .ytp-cards-button,
+html[ytqh-annotations] .ytp-suggested-action {
+  display: none !important;
+}

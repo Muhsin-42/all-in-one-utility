@@ -1,0 +1,48 @@
+.ytqh-host {
+  position: relative !important;
+}
+
+/* Clickable band over the top 30% of the thumbnail; the rest still plays the video. */
+.ytqh-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: inherit;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.35));
+  color: #fff;
+  font: 600 14px/1 Roboto, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.ytqh-host:hover .ytqh-btn,
+.ytqh-btn.ytqh-busy,
+.ytqh-btn.ytqh-fail {
+  opacity: 1;
+}
+
+.ytqh-btn:hover {
+  background: rgba(204, 0, 0, 0.85);
+}
+
+.ytqh-btn.ytqh-busy {
+  background: rgba(60, 60, 60, 0.85);
+  cursor: wait;
+}
+
+.ytqh-btn.ytqh-fail,
+.ytqh-btn.ytqh-fail:hover {
+  background: rgba(230, 126, 0, 0.9);
+}
