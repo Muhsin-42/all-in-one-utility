@@ -10,6 +10,7 @@
     <button type="button" role="tab" data-tab="speed">Video controller</button>
     <button type="button" role="tab" data-tab="color">Color</button>
     <button type="button" role="tab" data-tab="cors">CORS</button>
+    <button type="button" role="tab" data-tab="block">Focus</button>
   </nav>
 
   <section id="tab-yt" class="panel" role="tabpanel">
@@ -78,6 +79,22 @@
     <p class="note">Only tabs on these sites get CORS headers, and only on their fetch/XHR, font, image and media responses. The page's exact origin is sent back instead of *, so logged-in requests keep working, and no other headers are changed. A server that answers the OPTIONS preflight with an error (404, 405…) can't be fixed by an extension.</p>
   </section>
 
+  <section id="tab-block" class="panel" role="tabpanel" hidden>
+    <div class="cors-origin" id="block-origin"></div>
+    <div class="pick-row">
+      <button type="button" class="pick-btn" id="block-this">Block this site</button>
+    </div>
+    <p class="speed-status" id="block-status"></p>
+
+    <h2>Blocked sites</h2>
+    <ul class="cors-list block-list" id="block-list"></ul>
+    <form class="cors-add" id="block-add">
+      <input type="text" id="block-add-input" placeholder="instagram.com" aria-label="Site to block" spellcheck="false">
+      <button type="submit">Block</button>
+    </form>
+    <p class="note">Blocked sites (and their subdomains) open a page that asks you to type a phrase. That unlocks the site for 10 minutes, then it's blocked again and open tabs on it go back to the blocked page. A site has to be unlocked before you can remove it.</p>
+  </section>
+
   <section id="tab-color" class="panel" role="tabpanel" hidden>
     <div class="pick-row">
     <button type="button" class="pick-btn" id="color-pick">
@@ -116,6 +133,7 @@
 
   <script src="features.js"></script>
   <script src="cors.js"></script>
+  <script src="blocker.js"></script>
   <script src="popup.js"></script>
   <script src="popup-color.js"></script>
 </body>

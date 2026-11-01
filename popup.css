@@ -615,3 +615,16 @@ body.off .row:not(:first-of-type) {
   font-size: 11px;
   color: var(--muted);
 }
+
+/* --- Focus tab --- */
+
+.pick-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.block-list .block-state {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 11px;
+}

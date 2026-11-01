@@ -264,6 +264,114 @@ chrome.storage.onChanged.addListener((_changes, area) => {
   if (area === 'sync') chrome.storage.sync.get(CORS_KEYS, renderCors);
 });
 
+// --- Focus tab: edits the blocked-site list in blocker.js's settings (background.js applies it) ---
+
+const blockThis = document.getElementById('block-this');
+const blockStatus = document.getElementById('block-status');
+const blockList = document.getElementById('block-list');
+let blockSites = [];
+let blockUnlocks = {};
+let blockSite = '';
+
+function setBlockSites(sites) {
+  chrome.storage.sync.set({ 'block-sites': [...new Set(sites)] });
+}
+
+function lockSite(site) {
+  const { [site]: _, ...rest } = blockUnlocks;
+  chrome.storage.local.set({ 'block-unlocks': rest });
+}
+
+const left = (ms) => {
+  const sec = Math.max(0, Math.ceil(ms / 1000));
+  return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+};
+
+function renderBlock() {
+  const now = Date.now();
+  const open = (site) => blockUnlocks[site] > now;
+  const entry = blockEntryFor(blockSites, tabUrl);
+  document.getElementById('block-origin').textContent = blockSite || 'This page';
+  blockThis.disabled = !blockSite || !!entry;
+  blockThis.textContent = entry ? 'This site is blocked' : 'Block this site';
+  blockStatus.textContent = !blockSite ? 'Only http and https sites can be blocked.'
+    : entry && open(entry) ? 'Unlocked for ' + left(blockUnlocks[entry] - now) + ' more.'
+    : '';
+
+  blockList.textContent = '';
+  if (!blockSites.length) {
+    const li = document.createElement('li');
+    li.className = 'note';
+    li.textContent = 'No sites yet.';
+    blockList.appendChild(li);
+  }
+  for (const site of blockSites) {
+    const li = document.createElement('li');
+    const name = document.createElement('span');
+    name.textContent = site;
+    const state = document.createElement('span');
+    state.className = 'block-state';
+    li.append(name, state);
+    if (open(site)) {
+      state.textContent = left(blockUnlocks[site] - now);
+      const lock = document.createElement('button');
+      lock.type = 'button';
+      lock.title = 'Lock now';
+      lock.textContent = '🔒';
+      lock.addEventListener('click', () => lockSite(site));
+      const remove = document.createElement('button');
+      remove.type = 'button';
+      remove.title = 'Remove';
+      remove.textContent = '×';
+      remove.addEventListener('click', () => setBlockSites(blockSites.filter((s) => s !== site)));
+      state.after(lock, remove);
+    } else {
+      state.textContent = 'locked';
+      state.title = 'Open the site and type the phrase to unlock it before removing';
+    }
+    blockList.appendChild(li);
+  }
+}
+
+blockThis.addEventListener('click', () => {
+  if (blockSite) setBlockSites([...blockSites, blockSite]);
+});
+
+document.getElementById('block-add').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = document.getElementById('block-add-input');
+  const site = blockNormalize(input.value);
+  if (!site) {
+    input.setCustomValidity('Enter a site like instagram.com');
+    input.reportValidity();
+    return;
+  }
+  input.value = '';
+  setBlockSites([...blockSites, site]);
+});
+document.getElementById('block-add-input').addEventListener('input', (e) => e.target.setCustomValidity(''));
+
+function loadBlock() {
+  chrome.storage.sync.get(BLOCK_DEFAULTS, (s) => {
+    chrome.storage.local.get({ 'block-unlocks': {} }, (l) => {
+      blockSites = s['block-sites'];
+      blockUnlocks = l['block-unlocks'];
+      renderBlock();
+    });
+  });
+}
+
+chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
+  tabUrl = tab?.url || '';
+  blockSite = blockNormalize(/^https?:/.test(tabUrl) ? tabUrl : '');
+  loadBlock();
+});
+chrome.storage.onChanged.addListener((changes, area) => {
+  if ((area === 'sync' && 'block-sites' in changes) || (area === 'local' && 'block-unlocks' in changes)) loadBlock();
+});
+// Keep the countdowns ticking while the popup is open.
+setInterval(() => { if (Object.keys(blockUnlocks).length) renderBlock(); }, 1000);
+
 chrome.storage.sync.get(YTQH_DEFAULTS, render);
 chrome.storage.onChanged.addListener((_changes, area) => {
   if (area === 'sync') chrome.storage.sync.get(YTQH_DEFAULTS, render);

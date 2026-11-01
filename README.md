@@ -43,6 +43,12 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
 - Sends back the page's exact origin instead of `*`, so cookies and `Authorization` headers keep working.
 - Only affects tabs on those sites. A **CORS** badge shows when it is on.
 
+### 🔒 Focus (site blocker)
+- Block any site, and its subdomains, from the popup or with one click on the current tab.
+- A blocked site opens a page that asks you to type *"i am a looser and continue to be"* (no pasting). That unlocks the site for 10 minutes.
+- After 10 minutes the site is blocked again, and tabs still on it go back to the blocked page.
+- A site can only be removed from the list while it is unlocked.
+
 ## Installation
 
 1. Clone or [download](https://github.com/Muhsin-42/all-in-one-utility/archive/refs/heads/main.zip) this repository.
@@ -68,12 +74,15 @@ Requires Chrome 111 or newer (also works in Edge, Brave and other Chromium brows
 | `speed.js`, `speed-main.js` | Speed controller and volume boost |
 | `popup-color.js`, `picker.js`, `fontinspect.js` | Color picker and font inspector |
 | `cors.js` | Shared CORS settings |
+| `blocker.js` | Shared site blocker settings and unlock phrase |
+| `blocked.html`, `blocked.js` | Page shown for blocked sites, with the unlock phrase |
 
 ## Permissions
 
 | Permission | Why |
 | --- | --- |
 | `storage` | Save your settings |
-| `declarativeNetRequest` | Block ad requests and add CORS headers |
+| `declarativeNetRequest` | Block ad requests, add CORS headers and redirect blocked sites |
+| `alarms` | Block a site again 10 minutes after you unlock it |
 | `activeTab`, `scripting` | Run the color picker and font inspector on the current tab |
 | `<all_urls>` | Speed controller and CORS work on any site |

@@ -1,9 +1,9 @@
 // YT Quick Hide: turns the ad-request blocking rules (rules.json) on or off to
 // match the "Block ads" switch (the rules only apply to requests made by
 // YouTube pages), fetches dislike counts for dislikes.js, and keeps the per-tab
-// CORS rules in sync (see cors.js).
+// CORS rules in sync (see cors.js) and runs the site blocker (see blocker.js).
 
-importScripts('features.js', 'cors.js');
+importScripts('features.js', 'cors.js', 'blocker.js');
 
 async function syncAdRules() {
   const s = await chrome.storage.sync.get(YTQH_DEFAULTS);
@@ -120,4 +120,83 @@ chrome.tabs.onRemoved.addListener((tabId) => syncCorsTab(tabId, null));
 chrome.tabs.onReplaced.addListener((added, removed) => {
   syncCorsTab(removed, null);
   chrome.tabs.get(added).then((tab) => syncCorsTab(added, tab.url), () => {});
+});
+
+// --- Site blocker ---
+// One dynamic rule redirects every locked site (see blocker.js) to
+// blocked.html. Unlocks live in storage.local as { site: expiry }; an alarm
+// fires at the next expiry to lock the site again and pull its open tabs back
+// to the blocked page.
+
+const BLOCK_RULE_ID = 1;
+const BLOCK_ALARM = 'block-relock';
+const blockedPage = (url) => chrome.runtime.getURL('blocked.html') + '#' + url;
+
+async function blockState() {
+  const { 'block-sites': sites } = await chrome.storage.sync.get(BLOCK_DEFAULTS);
+  const { 'block-unlocks': unlocks = {} } = await chrome.storage.local.get('block-unlocks');
+  const now = Date.now();
+  const live = Object.fromEntries(
+    Object.entries(unlocks).filter(([s, until]) => until > now && sites.includes(s)));
+  return { sites, unlocks: live, stale: Object.keys(live).length !== Object.keys(unlocks).length };
+}
+
+let blockQueue = Promise.resolve();
+function syncBlock() {
+  blockQueue = blockQueue.then(async () => {
+    const { sites, unlocks, stale } = await blockState();
+    if (stale) await chrome.storage.local.set({ 'block-unlocks': unlocks });
+    const locked = sites.filter((s) => !(s in unlocks));
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [BLOCK_RULE_ID],
+      addRules: locked.length ? [{
+        id: BLOCK_RULE_ID,
+        priority: 100,
+        action: { type: 'redirect', redirect: { regexSubstitution: blockedPage('\\0') } },
+        condition: { regexFilter: '^.+$', requestDomains: locked, resourceTypes: ['main_frame'] },
+      }] : [],
+    });
+    const next = Math.min(...Object.values(unlocks));
+    await chrome.alarms.clear(BLOCK_ALARM);
+    if (isFinite(next)) chrome.alarms.create(BLOCK_ALARM, { when: next });
+    for (const tab of await chrome.tabs.query({})) {
+      if (tab.url && locked.includes(blockEntryFor(sites, tab.url))) {
+        chrome.tabs.update(tab.id, { url: blockedPage(tab.url) }).catch(() => {});
+      }
+    }
+  }).catch((e) => console.warn('YTQH blocker:', e));
+  return blockQueue;
+}
+
+chrome.runtime.onInstalled.addListener(syncBlock);
+chrome.runtime.onStartup.addListener(syncBlock);
+chrome.alarms.onAlarm.addListener((a) => { if (a.name === BLOCK_ALARM) syncBlock(); });
+chrome.storage.onChanged.addListener((changes, area) => {
+  if ((area === 'sync' && 'block-sites' in changes) || (area === 'local' && 'block-unlocks' in changes)) {
+    syncBlock();
+  }
+});
+
+// Catches navigations the rule can't see (pages served from a service worker
+// cache, in-page history changes).
+chrome.tabs.onUpdated.addListener(async (tabId, info) => {
+  if (!info.url) return;
+  const { sites, unlocks } = await blockState();
+  const site = blockEntryFor(sites, info.url);
+  if (site && !(site in unlocks)) chrome.tabs.update(tabId, { url: blockedPage(info.url) }).catch(() => {});
+});
+
+// blocked.js sends the typed phrase here; the reply comes once the rule is
+// updated, so the page can go straight back to the site.
+chrome.runtime.onMessage.addListener((msg, _sender, reply) => {
+  if (msg?.type !== 'ytqh-block-unlock') return;
+  (async () => {
+    const { sites, unlocks } = await blockState();
+    if (!sites.includes(msg.site) || !blockPhraseOk(msg.phrase)) return reply({ ok: false });
+    unlocks[msg.site] = Date.now() + BLOCK_UNLOCK_MS;
+    await chrome.storage.local.set({ 'block-unlocks': unlocks });
+    await syncBlock();
+    reply({ ok: true, until: unlocks[msg.site] });
+  })();
+  return true;
 });
