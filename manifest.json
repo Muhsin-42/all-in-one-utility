@@ -3,7 +3,16 @@
   "name": "Browser Kit",
   "version": "2.2.0",
   "description": "Handy browser tools: a cleaner YouTube, video speed and volume control, color picker, font inspector, CORS switch and site blocker.",
-  "minimum_chrome_version": "111",
+  "minimum_chrome_version": "121",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "browser-kit@muhsin-42",
+      "strict_min_version": "140.0",
+      "data_collection_permissions": {
+        "required": ["browsingActivity"]
+      }
+    }
+  },
   "permissions": [
     "storage",
     "declarativeNetRequest",
@@ -15,7 +24,8 @@
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "scripts": ["features.js", "cors.js", "blocker.js", "background.js"]
   },
   "declarative_net_request": {
     "rule_resources": [

@@ -159,6 +159,9 @@ function showLoop(loop) {
   loopBtn.classList.toggle('active', loop?.b != null);
 }
 
+// Firefox has no picture-in-picture API (it offers its own PiP toggle).
+if (!('pictureInPictureEnabled' in document)) document.getElementById('pip-btn').style.display = 'none';
+
 // Runs speed.js's toggle through executeScript rather than a message, because
 // only executeScript passes this click on to the page, and the browser won't
 // open picture-in-picture without one.

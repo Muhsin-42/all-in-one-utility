@@ -132,6 +132,8 @@
     ['faster', '+', 'Faster (D)'], ['advance', '»', 'Forward 10s (X)'],
     ['loop', '⟲', 'A–B loop (A)'], ['pip', '⧉', 'Picture-in-picture (P)'], ['display', '×', 'Hide (V)']];
   const BEFORE_LABEL = new Set(['rewind', 'slower']);
+  // Firefox has no picture-in-picture API (it offers its own PiP toggle).
+  const HAS_PIP = 'pictureInPictureEnabled' in document;
 
   function build(el, st) {
     const host = document.createElement('ytqh-speed');
@@ -146,6 +148,7 @@
     label.title = 'Playback speed';
     box.append(label);
     for (const [action, text, title] of BUTTONS) {
+      if (action === 'pip' && !HAS_PIP) continue;
       const b = document.createElement('button');
       b.textContent = text;
       b.title = title;

@@ -3,7 +3,9 @@
 // YouTube pages), fetches dislike counts for dislikes.js, and keeps the per-tab
 // CORS rules in sync (see cors.js) and runs the site blocker (see blocker.js).
 
-importScripts('features.js', 'cors.js', 'blocker.js');
+// Chrome runs this as a service worker; Firefox loads these files itself
+// through the manifest's "scripts" list and has no importScripts.
+if (typeof importScripts === 'function') importScripts('features.js', 'cors.js', 'blocker.js');
 
 async function syncAdRules() {
   const s = await chrome.storage.sync.get(YTQH_DEFAULTS);

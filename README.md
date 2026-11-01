@@ -63,7 +63,14 @@ No accounts, no tracking, no build step. Everything runs locally and your settin
 3. Click **Load unpacked** and select the project folder.
 4. Pin the extension and click its icon to open the popup.
 
-Requires Chrome 111 or newer (also works in Edge, Brave and other Chromium browsers).
+Requires Chrome 121 or newer (also works in Edge, Brave and other Chromium browsers).
+
+### Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and select `manifest.json` in the project folder.
+
+Requires Firefox 140 or newer. Firefox has no picture-in-picture API for extensions, so the "Pop out" button is hidden there; use Firefox's own PiP toggle on the video instead.
 
 ## Project structure
 
